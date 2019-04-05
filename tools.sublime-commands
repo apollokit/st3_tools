@@ -1,0 +1,11 @@
+[
+  {
+    "caption": "Kit's tools: Cursors from selection",
+    "command": "cursors_from_selection"
+  },
+  {
+    "caption": "Kit's tools: Cursors from comma-separated list",
+    "command": "cursors_from_comma_list"
+  }
+  //More commands
+]
