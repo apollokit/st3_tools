@@ -1,11 +1,19 @@
 [
   {
     "caption": "Kit's tools: Cursors from selection",
-    "command": "cursors_from_selection"
+    "command": "cursors_from_selection_soft_beg"
   },
   {
     "caption": "Kit's tools: Cursors from comma-separated list",
     "command": "cursors_from_comma_list"
+  },
+  {
+    "caption": "Kit's tools: Delete to soft beginning of line",
+    "command": "delete_to_soft_beg_line"
+  },
+  {
+    "caption": "Kit's tools: Go to soft beginning of line",
+    "command": "go_to_soft_beg_line"
   }
   //More commands
 ]
