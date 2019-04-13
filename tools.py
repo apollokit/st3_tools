@@ -13,7 +13,7 @@ class CursorsFromSelectionCommand(sublime_plugin.TextCommand):
     """
     def run(self, edit):
 
-        print('Run CursorsFromSelection')
+        print('Run CursorsFromSelectionCommand')
         # view.line(view.sel()[0])
 
         new_regions = []
@@ -33,7 +33,7 @@ class CursorsFromSelectionSoftBegCommand(sublime_plugin.TextCommand):
     """
     def run(self, edit):
 
-        print('Run CursorsFromSelection')
+        print('Run CursorsFromSelectionSoftBegCommand')
         # view.line(view.sel()[0])
 
         new_regions = []
@@ -150,3 +150,55 @@ class GoToSoftBegLineCommand(sublime_plugin.TextCommand):
         self.view.sel().clear()
         for reg in new_regions:
             self.view.sel().add(reg)
+
+class ChainAceJumpCommand(sublime_plugin.WindowCommand):
+    def run(self, commands):
+        """ Chain multiple commands together, respecting timing for the AceJump commands. 
+
+        For any AceJump commands, this function will pinch off the remaining commands after the
+        AceJump and pass them to AceJump for later execution. This is necessary because we can't do
+        concurrency in sublime plugins.
+
+        Based on Chain of Command sublime package:
+            - https://packagecontrol.io/packages/Chain%20of%20Command
+            - https://github.com/jisaacks/ChainOfCommand/blob/master/chain.py
+        Modified the vanilla AceJump to play well:
+            - https://packagecontrol.io/packages/AceJump
+            - https://github.com/ice9js/ace-jump-sublime/blob/master/ace_jump.py
+            - See ReadMe for details on how to get the modified version.
+
+        The command name for key-bindings etc will be chain_ace_jumpz
+        """
+
+        break_after = False
+        window = self.window
+        for i, command in enumerate(commands):
+            command_name = command[0]
+
+            # if we're doing an ace_jump command we need to pinch off the remaining commands, for
+            # delegation.
+            remaining_commands = []
+            if 'ace_jump' in command_name:
+                remaining_commands = commands[i+1:]
+                break_after = True
+
+            # Get the command args. This should be a dictionary of key value pairs where each key
+            # is for each command arg, e.g. {'retries: 5', 'verbose': True}
+            try:
+                command_args = command[1]
+            except:
+                command_args = {}
+
+            # if there was a command_args provided, make sure it's a dict
+            assert isinstance(command_args, dict)
+
+            # only add a remaining_commands arg if we're gonna do an ace_jump command
+            if 'ace_jump' in command_name:
+                command_args['remaining_commands'] = remaining_commands
+
+            window.run_command(command_name, command_args)
+
+            # if we delegated to ace jump to run the rest of the commands, we should break now.
+            # Otherwise the loop will make us execute the subsequent commands again!
+            if break_after:
+                break
