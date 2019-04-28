@@ -2,7 +2,6 @@
 
 Author: Kit Kennedy
 """
-
 import sublime, sublime_plugin
 
 class CursorsFromSelectionCommand(sublime_plugin.TextCommand):
@@ -26,7 +25,7 @@ class CursorsFromSelectionCommand(sublime_plugin.TextCommand):
             self.view.sel().add(reg)
 
 class CursorsFromSelectionSoftBegCommand(sublime_plugin.TextCommand):
-    """ For a block(s) of selected text, unselect and add a cursor at the soft beginning of every 
+    """ For a block(s) of selected text, unselect and add a cursor at the soft beginning of every
     line (where the text starts)
 
     The command name for key-bindings etc will be cursors_from_selection_soft_beg
@@ -73,10 +72,10 @@ class CursorsFromCommaListCommand(sublime_plugin.TextCommand):
 
                 start out pretending we just found a command right before the text, so that we'll
                 add the beginning of the string indx as well
-                                
+
                 Args:
                     dat_text: the text
-                
+
                 Returns:
                     List of indices within the string
                     List[int]
@@ -89,12 +88,12 @@ class CursorsFromCommaListCommand(sublime_plugin.TextCommand):
                         else: pass
                     elif comma_parse_state == 'gobbling_whitespace':
                         if char == ' ': pass
-                        else: 
+                        else:
                             indcs.append(indx)
                             comma_parse_state = 'searching_comma'
                 return indcs
 
-            # find the indices of all commas in the text            
+            # find the indices of all commas in the text
             comma_indcs = comma_parse(the_text)
             comma_indcs = [indx + the_text_begins for indx in comma_indcs]
             # make a new region for each post-comma point. The region is empty because all we want
@@ -153,7 +152,7 @@ class GoToSoftBegLineCommand(sublime_plugin.TextCommand):
 
 class ChainAceJumpCommand(sublime_plugin.WindowCommand):
     def run(self, commands):
-        """ Chain multiple commands together, respecting timing for the AceJump commands. 
+        """ Chain multiple commands together, respecting timing for the AceJump commands.
 
         For any AceJump commands, this function will pinch off the remaining commands after the
         AceJump and pass them to AceJump for later execution. This is necessary because we can't do
@@ -167,7 +166,7 @@ class ChainAceJumpCommand(sublime_plugin.WindowCommand):
             - https://github.com/ice9js/ace-jump-sublime/blob/master/ace_jump.py
             - See ReadMe for details on how to get the modified version.
 
-        The command name for key-bindings etc will be chain_ace_jumpz
+        The command name for key-bindings etc will be chain_ace_jump
         """
 
         break_after = False
@@ -202,3 +201,46 @@ class ChainAceJumpCommand(sublime_plugin.WindowCommand):
             # Otherwise the loop will make us execute the subsequent commands again!
             if break_after:
                 break
+
+class CustomEndLineCommand(sublime_plugin.TextCommand):
+    """ Replacement for the usual ctrl-e command. Goes to the end of the line if cursor is in the
+    middle of the line, otherwise will place the cursor in a useful place within the line.
+
+    The command name for key-bindings etc will be custom_end_line
+    """
+    def run(self, edit):
+
+        print('Run CustomEndLineCommand')
+
+        new_regions = []
+        for region in self.view.sel():
+            end_reg = region.end()
+
+            first_line = self.view.lines(region)[0]
+            first_line_end = first_line.end()
+
+            if end_reg == first_line_end:
+                first_line_s = self.view.substr(first_line)
+                locs = []
+                # the things to look for. Place cursor directly in front of the last-found of any of
+                # these characters
+                locs += [first_line_s.rfind(')')]
+                locs += [first_line_s.rfind(']')]
+                locs += [first_line_s.rfind('}')]
+                locs += [first_line_s.rfind(':')]
+                locs += [first_line_s.rfind("'")]
+
+                loc = max(locs)
+                if loc == -1:
+                    loc = len(first_line_s)
+
+                loc += first_line.begin()
+                new_regions += [sublime.Region(loc, loc)]
+
+            else:
+                new_regions += [sublime.Region(first_line_end, first_line_end)]
+
+        self.view.sel().clear()
+        for reg in new_regions:
+            self.view.sel().add(reg)
+

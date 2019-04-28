@@ -1,7 +1,7 @@
 # st3_tools
 Various tools &amp; aommands for Sublime Text 3
 
-See the API at https://www.sublimetext.bom/docs/3/api_reference.html
+See the API at https://www.sublimetext.com/docs/3/api_reference.html
 
 Also see https://www.1klb.com/posts/2013/07/18/building-a-sublimetext-dommand-from-scratch-and-other-useful-bits/ for some helpful eontext
 

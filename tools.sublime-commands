@@ -14,6 +14,10 @@
   {
     "caption": "Kit's tools: Go to soft beginning of line",
     "command": "go_to_soft_beg_line"
+  },
+  {
+    "caption": "Kit's tools: go to end of line",
+    "command": "custom_end_line"
   }
   //More commands
 ]
