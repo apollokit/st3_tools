@@ -136,7 +136,7 @@ class GoToSoftBegLineCommand(sublime_plugin.TextCommand):
     """
     def run(self, edit):
 
-        print('Run DeleteToSoftBOLCommand')
+        print('Run GoToSoftBegLineCommand')
 
         new_regions = []
         for region in self.view.sel():
@@ -149,6 +149,112 @@ class GoToSoftBegLineCommand(sublime_plugin.TextCommand):
         self.view.sel().clear()
         for reg in new_regions:
             self.view.sel().add(reg)
+
+class SelectToSoftBegLineCommand(sublime_plugin.TextCommand):
+    """ Select to the soft beginning of the line
+
+    The command name for key-bindings etc will be  select_to_soft_beg_line
+    """
+    def run(self, edit):
+
+        print('Run SelectToSoftBegLineCommand')
+
+        new_regions = []
+        for region in self.view.sel():
+            first_line = self.view.lines(region)[0]
+            first_line_s = self.view.substr(first_line)
+            first_line_beg_indx = len(first_line_s) - len(first_line_s.lstrip())
+            first_line_soft_beg = first_line.begin() + first_line_beg_indx
+            new_regions += [sublime.Region(first_line_soft_beg, region.end())]
+
+        self.view.sel().clear()
+        for reg in new_regions:
+            self.view.sel().add(reg)
+
+class CustomEndLineCommand(sublime_plugin.TextCommand):
+    """ Replacement for the usual ctrl-e command. Goes to the end of the line if cursor is in the
+    middle of the line, otherwise will place the cursor in a useful place within the line.
+
+    The command name for key-bindings etc will be custom_end_line
+    """
+    def run(self, edit):
+
+        print('Run CustomEndLineCommand')
+
+        new_regions = []
+        for region in self.view.sel():
+            end_reg = region.end()
+
+            first_line = self.view.lines(region)[0]
+            first_line_end = first_line.end()
+
+            if end_reg == first_line_end:
+                first_line_s = self.view.substr(first_line)
+                locs = []
+                # the things to look for. Place cursor directly in front of the last-found of any of
+                # these characters
+                locs += [first_line_s.rfind(')')]
+                locs += [first_line_s.rfind(']')]
+                locs += [first_line_s.rfind('}')]
+                locs += [first_line_s.rfind(':')]
+                locs += [first_line_s.rfind("'")]
+
+                loc = max(locs)
+                if loc == -1:
+                    loc = len(first_line_s)
+
+                loc += first_line.begin()
+                new_regions += [sublime.Region(loc, loc)]
+
+            else:
+                new_regions += [sublime.Region(first_line_end, first_line_end)]
+
+        self.view.sel().clear()
+        for reg in new_regions:
+            self.view.sel().add(reg)
+
+
+class SelectToCustomEndLineCommand(sublime_plugin.TextCommand):
+    """ Select to the custom end line point
+
+    The command name for key-bindings etc will be select_to_custom_end_line
+    """
+    def run(self, edit):
+
+        print('Run SelectToCustomEndLineCommand')
+
+        new_regions = []
+        for region in self.view.sel():
+            end_reg = region.end()
+
+            first_line = self.view.lines(region)[0]
+            first_line_end = first_line.end()
+
+            if end_reg == first_line_end:
+                first_line_s = self.view.substr(first_line)
+                locs = []
+                # the things to look for. Place cursor directly in front of the last-found of any of
+                # these characters
+                locs += [first_line_s.rfind(')')]
+                locs += [first_line_s.rfind(']')]
+                locs += [first_line_s.rfind('}')]
+                locs += [first_line_s.rfind(':')]
+                locs += [first_line_s.rfind("'")]
+
+                loc = max(locs)
+                if loc == -1:
+                    loc = len(first_line_s)
+
+                loc += first_line.begin()
+                new_regions += [sublime.Region(loc, loc)]
+
+            else:
+                new_regions += [sublime.Region(region.begin(), first_line_end)]
+
+        self.view.sel().clear()
+        for reg in new_regions:
+            self.view.sel().add(reg)
+
 
 class ChainAceJumpCommand(sublime_plugin.WindowCommand):
     def run(self, commands):
@@ -201,49 +307,6 @@ class ChainAceJumpCommand(sublime_plugin.WindowCommand):
             # Otherwise the loop will make us execute the subsequent commands again!
             if break_after:
                 break
-
-class CustomEndLineCommand(sublime_plugin.TextCommand):
-    """ Replacement for the usual ctrl-e command. Goes to the end of the line if cursor is in the
-    middle of the line, otherwise will place the cursor in a useful place within the line.
-
-    The command name for key-bindings etc will be custom_end_line
-    """
-    def run(self, edit):
-
-        print('Run CustomEndLineCommand')
-
-        new_regions = []
-        for region in self.view.sel():
-            end_reg = region.end()
-
-            first_line = self.view.lines(region)[0]
-            first_line_end = first_line.end()
-
-            if end_reg == first_line_end:
-                first_line_s = self.view.substr(first_line)
-                locs = []
-                # the things to look for. Place cursor directly in front of the last-found of any of
-                # these characters
-                locs += [first_line_s.rfind(')')]
-                locs += [first_line_s.rfind(']')]
-                locs += [first_line_s.rfind('}')]
-                locs += [first_line_s.rfind(':')]
-                locs += [first_line_s.rfind("'")]
-
-                loc = max(locs)
-                if loc == -1:
-                    loc = len(first_line_s)
-
-                loc += first_line.begin()
-                new_regions += [sublime.Region(loc, loc)]
-
-            else:
-                new_regions += [sublime.Region(first_line_end, first_line_end)]
-
-        self.view.sel().clear()
-        for reg in new_regions:
-            self.view.sel().add(reg)
-
 
 class MoveVisibleRegionBeginCommand(sublime_plugin.TextCommand):
     """ 
