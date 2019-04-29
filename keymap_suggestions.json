@@ -1,0 +1,51 @@
+[
+  // stuff to make sublime's incremental find functionality a bit better. Starts the find search from the top of the currently visible region on-screen
+    { "keys": ["super+i"],
+      "command": "chain",
+      "args": {
+        "commands": [
+          ["move_visible_region_begin"],
+          ["show_panel", {"panel": "incremental_find", "reverse": false}],
+        ]
+      }
+    },
+    {
+      "keys": ["tab"],
+      "command": "find_next",
+      "context":
+          [
+              {"key": "panel", "operand": "incremental_find"}, {"key": "panel_has_focus"}
+          ]
+    },
+    {
+      "keys": ["shift+tab"],
+      "command": "find_prev",
+      "context":
+          [
+              {"key": "panel", "operand": "incremental_find"}, {"key": "panel_has_focus"}
+          ]
+    },
+    {
+      "keys": ["`"],
+      "command": "toggle_regex",
+      "context":
+          [
+              {"key": "panel", "operand": "incremental_find"}, {"key": "panel_has_focus"}
+          ]
+    },
+    {
+      "keys": ["escape"],
+      "command": "chain",
+      "args": {
+        "commands": [
+          ["hide_panel", {"cancel": true},],
+          ["saved_location_return"],
+          ["show_at_center"]
+        ]
+      },
+      "context":
+          [
+              {"key": "panel", "operand": "incremental_find"}, {"key": "panel_has_focus"}
+          ]
+    }
+]

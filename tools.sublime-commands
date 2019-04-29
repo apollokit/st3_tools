@@ -16,8 +16,16 @@
     "command": "go_to_soft_beg_line"
   },
   {
-    "caption": "Kit's tools: go to end of line",
+    "caption": "Kit's tools: Go to end of line",
     "command": "custom_end_line"
+  },
+  {
+    "caption": "Kit's tools: Go to beginning of visible region",
+    "command": "move_visible_region_begin"
+  },
+  {
+    "caption": "Kit's tools: Return cursor to previously saved locations",
+    "command": "saved_location_return"
   }
   //More commands
 ]

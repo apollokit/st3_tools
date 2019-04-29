@@ -244,3 +244,54 @@ class CustomEndLineCommand(sublime_plugin.TextCommand):
         for reg in new_regions:
             self.view.sel().add(reg)
 
+
+class MoveVisibleRegionBeginCommand(sublime_plugin.TextCommand):
+    """ 
+    Moves cursor to beginning of currently-visible region. Saves current cursor locations
+
+    The command name for key-bindings etc will be move_visible_region_begin
+    """
+
+    def run(self, edit):
+
+        print('Run MoveVisibleRegionBeginCommand')
+
+        # save all current cursor locations
+        SavedLocationReturnCommand.saved_locations = []
+        for reg in self.view.sel():
+            SavedLocationReturnCommand.saved_locations.append(reg.begin())
+
+        screenful = self.view.visible_region()
+
+        # move to second line ... it ends up working better with incremental find and making the
+        # screen less jumpy
+        second_line_begin = self.view.lines(screenful)[1].begin()
+
+        begin_region = sublime.Region(second_line_begin, second_line_begin)
+
+        self.view.sel().clear()
+        self.view.sel().add(begin_region)
+
+class SavedLocationReturnCommand(sublime_plugin.TextCommand):
+    """ 
+    Returns cursors to previously-saved locations, if any
+
+    The command name for key-bindings etc will be saved_location_return
+    """
+
+    # keeps track of the cursor location from before running this command
+    # note this static member is meant to be overwritten in other places....don't assume only this
+    # class can write to it!
+    saved_locations = []
+
+    def run(self, edit):
+
+        print('Run SavedLocationReturnCommand')
+
+        return_regions = []
+        for loc in SavedLocationReturnCommand.saved_locations:
+            return_regions.append(sublime.Region(loc, loc))
+
+        self.view.sel().clear()
+        for reg in return_regions:
+            self.view.sel().add(reg)
