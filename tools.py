@@ -185,29 +185,29 @@ class CustomEndLineCommand(sublime_plugin.TextCommand):
         for region in self.view.sel():
             end_reg = region.end()
 
-            first_line = self.view.lines(region)[0]
-            first_line_end = first_line.end()
+            last_line = self.view.lines(region)[-1]
+            last_line_end = last_line.end()
 
-            if end_reg == first_line_end:
-                first_line_s = self.view.substr(first_line)
+            if end_reg == last_line_end:
+                last_line_s = self.view.substr(last_line)
                 locs = []
                 # the things to look for. Place cursor directly in front of the last-found of any of
                 # these characters
-                locs += [first_line_s.rfind(')')]
-                locs += [first_line_s.rfind(']')]
-                locs += [first_line_s.rfind('}')]
-                locs += [first_line_s.rfind(':')]
-                locs += [first_line_s.rfind("'")]
+                locs += [last_line_s.rfind(')')]
+                locs += [last_line_s.rfind(']')]
+                locs += [last_line_s.rfind('}')]
+                locs += [last_line_s.rfind(':')]
+                locs += [last_line_s.rfind("'")]
 
                 loc = max(locs)
                 if loc == -1:
-                    loc = len(first_line_s)
+                    loc = len(last_line_s)
 
-                loc += first_line.begin()
+                loc += last_line.begin()
                 new_regions += [sublime.Region(loc, loc)]
 
             else:
-                new_regions += [sublime.Region(first_line_end, first_line_end)]
+                new_regions += [sublime.Region(last_line_end, last_line_end)]
 
         self.view.sel().clear()
         for reg in new_regions:
@@ -227,29 +227,29 @@ class SelectToCustomEndLineCommand(sublime_plugin.TextCommand):
         for region in self.view.sel():
             end_reg = region.end()
 
-            first_line = self.view.lines(region)[0]
-            first_line_end = first_line.end()
+            last_line = self.view.lines(region)[-1]
+            last_line_end = last_line.end()
 
-            if end_reg == first_line_end:
-                first_line_s = self.view.substr(first_line)
+            if end_reg == last_line_end:
+                last_line_s = self.view.substr(last_line)
                 locs = []
                 # the things to look for. Place cursor directly in front of the last-found of any of
                 # these characters
-                locs += [first_line_s.rfind(')')]
-                locs += [first_line_s.rfind(']')]
-                locs += [first_line_s.rfind('}')]
-                locs += [first_line_s.rfind(':')]
-                locs += [first_line_s.rfind("'")]
+                locs += [last_line_s.rfind(')')]
+                locs += [last_line_s.rfind(']')]
+                locs += [last_line_s.rfind('}')]
+                locs += [last_line_s.rfind(':')]
+                locs += [last_line_s.rfind("'")]
 
                 loc = max(locs)
                 if loc == -1:
-                    loc = len(first_line_s)
+                    loc = len(last_line_s)
 
-                loc += first_line.begin()
+                loc += last_line.begin()
                 new_regions += [sublime.Region(loc, loc)]
 
             else:
-                new_regions += [sublime.Region(region.begin(), first_line_end)]
+                new_regions += [sublime.Region(region.begin(), last_line_end)]
 
         self.view.sel().clear()
         for reg in new_regions:
