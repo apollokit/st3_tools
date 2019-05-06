@@ -358,3 +358,46 @@ class SavedLocationReturnCommand(sublime_plugin.TextCommand):
         self.view.sel().clear()
         for reg in return_regions:
             self.view.sel().add(reg)
+
+class FixTextSingleLineCommand(sublime_plugin.TextCommand):
+    """ 
+    Fixes a single line containing a comment or prose for grammatical accuracy
+
+    Performs fixes on individual lines of text within the selection region(s)
+    
+    Functionality implemented:
+    - correct capitalization at the beginning of sentences
+
+    The command name for key-bindings etc will be fix_text_single_line
+    """
+
+    def run(self, edit):
+
+        print('Run FixTextSingleLineCommand')
+
+        def get_edit(s):
+            """ Returns a string that is a suitable replacement for s
+            """
+            import re
+            # Find the first useful character in the string
+            m = re.search("[a-zA-Z0-9]", s)
+            trimmed_start = m.start()
+            s_trimmed = s[trimmed_start:]
+            ## now perform arbitrary string edits
+            # Fix first character capitalization
+            s_edited = s_trimmed.capitalize()
+
+            return s[:trimmed_start] + s_edited
+
+        new_regions = []
+        edits = []
+        for region in self.view.sel():
+            for line in self.view.lines(region):
+                line_s = self.view.substr(line)
+                line_s_edited = get_edit(line_s)
+                edits.append(line_s_edited)
+                new_regions += [sublime.Region(line.begin(), line.end())]
+
+        # self.view.sel().clear()
+        for reg, edited in zip(new_regions, edits):
+            self.view.replace(edit, reg, edited)

@@ -26,10 +26,14 @@
   {
     "caption": "Kit's tools: Return cursor to previously saved locations",
     "command": "saved_location_return"
-  }
+  },
   {
     "caption": "Kit's tools: Select to soft beginning of the line",
     "command": "select_to_soft_beg_line_command"
+  },
+  {
+    "caption": "Kit's tools: FixTextSingleLine",
+    "command": "fix_text_single_line"
   }
   //More commands
 ]
