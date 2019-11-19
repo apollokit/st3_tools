@@ -34,6 +34,13 @@
   {
     "caption": "Kit's tools: FixTextSingleLine",
     "command": "fix_text_single_line"
-  }
+  },
+  {
+    "caption": "Kit's tools: Auto Complete Toggle",
+    "command": "toggle_setting",
+    "args": {
+      "setting": "auto_complete"
+    }
+  },
   //More commands
 ]
