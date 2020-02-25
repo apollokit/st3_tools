@@ -24,6 +24,27 @@ class CursorsFromSelectionCommand(sublime_plugin.TextCommand):
         for reg in new_regions:
             self.view.sel().add(reg)
 
+class AddRmrfCommand(sublime_plugin.TextCommand):
+    """ Add "rm -rf" at the beginning of currently selected lines"
+
+    The command name for key-bindings etc will be add_rmrf
+    """
+    def run(self, edit):
+
+        print('Run AddRmrfCommand')
+
+        insert_points = []
+        for region in self.view.sel():
+            for line in self.view.lines(region):
+                insert_points.append(line.begin())
+
+        # we have to keep track of the effects of previous insertions on a
+        # point's current location. (unfortunately, we can't just iterate
+        # through a bunch of regions and replace them all, because of this)
+        num_chars_inserted = 0
+        for pt in insert_points:
+            num_chars_inserted += self.view.insert(edit, pt + num_chars_inserted, 'rm -rf ')
+
 class CursorsFromSelectionSoftBegCommand(sublime_plugin.TextCommand):
     """ For a block(s) of selected text, unselect and add a cursor at the soft beginning of every
     line (where the text starts)

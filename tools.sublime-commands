@@ -42,5 +42,9 @@
       "setting": "auto_complete"
     }
   },
+  {
+    "caption": "Kit's tools: insert rm -rf",
+    "command": "add_rmrf"
+  },
   //More commands
 ]
