@@ -331,7 +331,7 @@ class ChainAceJumpCommand(sublime_plugin.WindowCommand):
 
 class MoveVisibleRegionBeginCommand(sublime_plugin.TextCommand):
     """ 
-    Moves cursor to beginning of currently-visible region. Saves current cursor locations
+    Moves cursor to beginning of currently-visible region
 
     The command name for key-bindings etc will be move_visible_region_begin
     """
@@ -339,11 +339,6 @@ class MoveVisibleRegionBeginCommand(sublime_plugin.TextCommand):
     def run(self, edit):
 
         print('Run MoveVisibleRegionBeginCommand')
-
-        # save all current cursor locations
-        SavedLocationReturnCommand.saved_locations = []
-        for reg in self.view.sel():
-            SavedLocationReturnCommand.saved_locations.append(reg.begin())
 
         screenful = self.view.visible_region()
 
@@ -355,6 +350,22 @@ class MoveVisibleRegionBeginCommand(sublime_plugin.TextCommand):
 
         self.view.sel().clear()
         self.view.sel().add(begin_region)
+
+class SaveLocationCommand(sublime_plugin.TextCommand):
+    """ 
+    Save the current cursor locations
+
+    The command name for key-bindings etc will be save_location
+    """
+
+    def run(self, edit):
+
+        print('Run SaveLocationCommand')
+
+        # save all current cursor locations
+        SavedLocationReturnCommand.saved_locations = []
+        for reg in self.view.sel():
+            SavedLocationReturnCommand.saved_locations.append(reg.begin())
 
 class SavedLocationReturnCommand(sublime_plugin.TextCommand):
     """ 
